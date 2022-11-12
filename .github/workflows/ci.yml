@@ -18,15 +18,35 @@ jobs:
         uses: actions/checkout@v2
         with:
           persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          # 选择要使用的 node 版本
+          node-version: '14'
 
-      # 生成静态文件
-      - name: Build
-        run: yarn install && yarn docs:build
+      # 缓存 node_modules
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
+      # 如果缓存没有命中，安装依赖
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn --frozen-lockfile
+
+      # 运行构建脚本
+      - name: Build frontend
+        run: yarn build
       # 部署到 GitHub Pages
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
           ACCESS_TOKEN: ${{ secrets.WEB_TOKEN }} # 也就是我们刚才生成的 secret
           BRANCH: gh-pages # 部署到 gh-pages 分支，因为 main 分支存放的一般是源码，而 gh-pages 分支则用来存放生成的静态文件
-          FOLDER: docs/.vuepress/dist # vuepress 生成的静态文件存放的地方
+          FOLDER: /docs/.vuepress/dist # vuepress 生成的静态文件存放的地方
