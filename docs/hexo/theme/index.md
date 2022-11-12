@@ -131,3 +131,4 @@ Butterfly主题自带的页面有tags，categories，link。
 class_name 和 class_desc 支持 html 格式书写，如不需要，也可以留空。
 
 ## 自定义页面
+通常情况下您仅需按照您参考的教程进行配置即可。若您想开发页面，您可使用markdown与HTML。
