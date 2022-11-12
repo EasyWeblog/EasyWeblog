@@ -42,7 +42,7 @@ jobs:
 
       # 运行构建脚本
       - name: Build frontend
-        run: yarn build
+        run: yarn docs:build
       # 部署到 GitHub Pages
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
